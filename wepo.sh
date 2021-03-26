@@ -1,5 +1,9 @@
 #!/bin/bash 
 
+if [ -z $WEPO_URL ]; then
+  echo 'The environment variable "WEPO_URL" is not set.'
+  exit 1
+fi
 URL=$WEPO_URL
 
 if [ -p /dev/stdin ]; then
