@@ -31,6 +31,7 @@ if [ -n "$body" ]; then
     "content": "$body"
   }
 EOS
+  echo
 else
   echo "empty value"
 fi
