@@ -13,7 +13,14 @@ else
   body="$@"
 fi
 
-# echo "$body"
+while getopts d OPT
+do
+  case $OPT in
+    d) echo "$body"
+    ;;
+  esac
+done
+
 if [ -n "$body" ]; then
   curl -X POST -H 'Content-type: application/json' -d @- $URL << EOS
   {
