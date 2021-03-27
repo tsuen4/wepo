@@ -10,9 +10,9 @@ if [ -p /dev/stdin ]; then
   body=`cat -`
   # escape LF, tab and double quotes
   body=`echo "$body" | \
-    perl -CS -pe 's/$/\\\\n/' | perl -CS -pe 's/\R//' | \
-    perl -CS -pe 's/\t/\    /g' | \
-    perl -CS -pe 's/"/\\\\"/g'`
+    sed -e 's/$/\\\\n/' | sed -e 's/\R//' | \
+    sed -e 's/\t/\    /g' | \
+    sed -e 's/"/\\\\"/g'`
 else
   body="$@"
 fi
