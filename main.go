@@ -37,7 +37,8 @@ func init() {
 }
 
 func main() {
-	os.Exit(int(Main(os.Args[1:])))
+	flag.Parse()
+	os.Exit(int(Main(flag.Args())))
 }
 
 func Main(args []string) exitCode {
@@ -51,7 +52,6 @@ func Main(args []string) exitCode {
 const sendCharLimit = 1024
 
 func run(args []string) error {
-	flag.Parse()
 	url, err := getURL()
 	if err != nil {
 		return err
