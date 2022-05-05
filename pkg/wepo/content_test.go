@@ -1,4 +1,4 @@
-package content
+package wepo
 
 import (
 	"testing"
@@ -145,22 +145,26 @@ func TestAppendLine(t *testing.T) {
 	}
 }
 
-func TestNewContents(t *testing.T) {
-	type newContentInput struct {
+func TestContents(t *testing.T) {
+	type contentInput struct {
 		input string
-		limit int
+		cfg   wepoConfig
+	}
+
+	cfg := wepoConfig{
+		CharLimit: 10,
 	}
 
 	testCases := []struct {
 		desc  string
-		input newContentInput
+		input contentInput
 		want  []string
 	}{
 		{
 			desc: "test new contents 1",
-			input: newContentInput{
+			input: contentInput{
 				"123 456 78",
-				10,
+				cfg,
 			},
 			want: []string{
 				"123 456 78",
@@ -168,9 +172,9 @@ func TestNewContents(t *testing.T) {
 		},
 		{
 			desc: "test new contents with line feed",
-			input: newContentInput{
+			input: contentInput{
 				"123\n4567\n8901",
-				10,
+				cfg,
 			},
 			want: []string{
 				"123\n4567",
@@ -179,9 +183,9 @@ func TestNewContents(t *testing.T) {
 		},
 		{
 			desc: "test new contents with empty line",
-			input: newContentInput{
+			input: contentInput{
 				"123\n4567\n\n8901",
-				10,
+				cfg,
 			},
 			want: []string{
 				"123\n4567\n",
@@ -191,7 +195,7 @@ func TestNewContents(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		t.Run(tc.desc, func(t *testing.T) {
-			lines, err := New(tc.input.input, tc.input.limit)
+			lines, err := tc.input.cfg.Contents(tc.input.input)
 			if err != nil {
 				t.Fatalf("failed to %s: %s", tc.desc, err)
 			}
