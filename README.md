@@ -1,22 +1,25 @@
 # wepo
 
-Webhook(Discord) に POST するやつ
+POST to the webhook URL set in config.ini.
 
-## 使用法
+## Usage
 
-- config.ini を生成する
+- Generate `config.ini`
   - `cp config.example.ini config.ini`
-- config.ini 内の `webhook_url` に、Webhook の URL を設定する
-  - キー(e.g. `[addr1]`)を追加することで、複数の宛先を設定可能
-- 実行時に与えた引数または標準入力の値が post される
+- Set the URL of the Webhook in `webhook_url` in `config.ini`
+  - Multiple destinations can be set by adding a section (e.g. `[sec1]`)
+- The following keys have a fixed priority and are loaded in the order of section, global, default
+  - `payload`: JSON format to be sent(default: `{"content":"{input}"}`)
+  - `char_limit`: Character limit to be sent(default: `1024`)
+- The arguments specified at run time or the values ​​of the standard input are sent.
 
 ```shell
 # arg
-wepo example
+./wepo example
 
 # stdin
-cat example.txt | wepo
+cat example.txt | ./wepo
 
-# other address
-wepo -a addr1 example
+# other destinations
+./wepo -d sec1 example
 ```
