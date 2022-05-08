@@ -2,6 +2,8 @@ package wepo
 
 import (
 	"testing"
+
+	"github.com/tsuen4/wepo/pkg/wepo/config"
 )
 
 func TestSplitRow(t *testing.T) {
@@ -146,25 +148,21 @@ func TestAppendLine(t *testing.T) {
 }
 
 func TestContents(t *testing.T) {
-	type contentInput struct {
+	type in struct {
 		input string
-		cfg   wepoConfig
-	}
-
-	cfg := wepoConfig{
-		CharLimit: 10,
+		limit int
 	}
 
 	testCases := []struct {
-		desc  string
-		input contentInput
-		want  []string
+		desc string
+		in   in
+		want []string
 	}{
 		{
 			desc: "test new contents 1",
-			input: contentInput{
+			in: in{
 				"123 456 78",
-				cfg,
+				10,
 			},
 			want: []string{
 				"123 456 78",
@@ -172,9 +170,9 @@ func TestContents(t *testing.T) {
 		},
 		{
 			desc: "test new contents with line feed",
-			input: contentInput{
+			in: in{
 				"123\n4567\n8901",
-				cfg,
+				10,
 			},
 			want: []string{
 				"123\n4567",
@@ -183,9 +181,9 @@ func TestContents(t *testing.T) {
 		},
 		{
 			desc: "test new contents with empty line",
-			input: contentInput{
+			in: in{
 				"123\n4567\n\n8901",
-				cfg,
+				10,
 			},
 			want: []string{
 				"123\n4567\n",
@@ -195,7 +193,13 @@ func TestContents(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		t.Run(tc.desc, func(t *testing.T) {
-			lines, err := tc.input.cfg.Contents(tc.input.input)
+			client := Wepo{
+				cfg: &config.WepoConfig{
+					CharLimit: tc.in.limit,
+				},
+			}
+
+			lines, err := client.NewContents(tc.in.input)
 			if err != nil {
 				t.Fatalf("failed to %s: %s", tc.desc, err)
 			}

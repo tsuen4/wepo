@@ -1,4 +1,4 @@
-package wepo
+package config
 
 import (
 	"fmt"
@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	TEST_INI_FILE              = "../../test/data/config.ini"
-	TEST_INI_FILE_EMPTY_GLOBAL = "../../test/data/config_empty_global.ini"
+	TEST_INI_FILE              = "../../../test/data/config.ini"
+	TEST_INI_FILE_EMPTY_GLOBAL = "../../../test/data/config_empty_global.ini"
 )
 
 const UNEXPECTED_ERROR_MSG = "failed to test '%s' is unexpected value: got: %v, want: %v"
