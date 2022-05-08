@@ -70,7 +70,14 @@ func (w wepo) post(content string) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusNoContent {
-		return fmt.Errorf("status code err: got: %d, want: %d", resp.StatusCode, http.StatusNoContent)
+		b, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return err
+		}
+
+		respBody := string(b)
+		statusCodeError := fmt.Sprintf("status code err: got: %d, want: %d", resp.StatusCode, http.StatusNoContent)
+		return fmt.Errorf("%s\n%s", respBody, statusCodeError)
 	}
 	return nil
 }
