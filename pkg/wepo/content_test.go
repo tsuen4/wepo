@@ -1,6 +1,7 @@
 package wepo
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/tsuen4/wepo/pkg/wepo/config"
@@ -91,11 +92,12 @@ func TestAppendLine(t *testing.T) {
 				10,
 			},
 			want: []string{
-				"123\n456\n78",
+				`123\n456`,
+				"78",
 			},
 		},
 		{
-			desc: "test append line with dividing value",
+			desc: "test append line with charLimit value",
 			input: appendLineInput{
 				[]string{
 					"123",
@@ -105,8 +107,8 @@ func TestAppendLine(t *testing.T) {
 				10,
 			},
 			want: []string{
-				"123\n4567",
-				"8901",
+				`123\n4567`,
+				`8901`,
 			},
 		},
 		{
@@ -136,6 +138,8 @@ func TestAppendLine(t *testing.T) {
 				}
 			}
 			if len(lines) != len(tc.want) {
+				fmt.Println("got:", lines)
+				fmt.Println("want:", tc.want)
 				t.Fatalf("failed to %s: got: %v, want: %v", tc.desc, len(lines), len(tc.want))
 			}
 			for i := 0; i < len(lines); i++ {
@@ -147,7 +151,7 @@ func TestAppendLine(t *testing.T) {
 	}
 }
 
-func TestContents(t *testing.T) {
+func TestNewContents(t *testing.T) {
 	type in struct {
 		input string
 		limit int
@@ -161,7 +165,7 @@ func TestContents(t *testing.T) {
 		{
 			desc: "test new contents 1",
 			in: in{
-				"123 456 78",
+				`123 456 78`,
 				10,
 			},
 			want: []string{
@@ -171,23 +175,33 @@ func TestContents(t *testing.T) {
 		{
 			desc: "test new contents with line feed",
 			in: in{
-				"123\n4567\n8901",
+				`123\n4567\n8901`,
 				10,
 			},
 			want: []string{
-				"123\n4567",
-				"8901",
+				`123\n4567`,
+				`\n8901`,
 			},
 		},
 		{
 			desc: "test new contents with empty line",
 			in: in{
-				"123\n4567\n\n8901",
+				`123\n4567\n\n8901`,
 				10,
 			},
 			want: []string{
-				"123\n4567\n",
-				"8901",
+				`123\n4567`,
+				`\n\n8901`,
+			},
+		},
+		{
+			desc: "test new contents with characters that need to be escaped",
+			in: in{
+				`{"content": "{input}"}`,
+				1024,
+			},
+			want: []string{
+				`{\"content\": \"{input}\"}`,
 			},
 		},
 	}

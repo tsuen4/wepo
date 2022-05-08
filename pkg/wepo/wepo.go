@@ -47,6 +47,7 @@ func Input(args []string, fd int) (string, error) {
 	if len(c) == 0 {
 		return "", fmt.Errorf("empty value")
 	}
+
 	return c, nil
 }
 
@@ -88,6 +89,9 @@ func (w wepo) NewContents(input string) ([]string, error) {
 			break
 		}
 
+		// escape double quotes
+		line = strings.ReplaceAll(line, "\"", `\"`)
+
 		var err error
 		contents, err = appendLine(contents, line, limit)
 		if err != nil {
@@ -105,10 +109,21 @@ func splitRow(str string, limit int) ([]string, error) {
 		for i := 0; i < len(runes); i += limit {
 			nextSep := i + limit
 
+			isBackSlashEnd := false
 			if nextSep < len(runes) {
+				// Prevents trailing backslashes
+				if runes[nextSep-1] == '\\' {
+					isBackSlashEnd = true
+					nextSep--
+				}
+
 				lines = append(lines, string(runes[i:nextSep]))
 			} else {
 				lines = append(lines, string(runes[i:]))
+			}
+
+			if isBackSlashEnd {
+				i--
 			}
 		}
 		return lines, nil
@@ -136,7 +151,7 @@ func appendLine(lines []string, str string, limit int) ([]string, error) {
 
 	body := ""
 	if len(lines[idx]) != 0 {
-		body += lines[idx] + "\n"
+		body += lines[idx] + `\n`
 	}
 	body += str
 
