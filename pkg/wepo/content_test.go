@@ -193,7 +193,7 @@ func TestContents(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		t.Run(tc.desc, func(t *testing.T) {
-			client := Wepo{
+			client := wepo{
 				cfg: &config.WepoConfig{
 					CharLimit: tc.in.limit,
 				},

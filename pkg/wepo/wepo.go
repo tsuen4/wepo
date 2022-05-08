@@ -12,19 +12,19 @@ import (
 	"golang.org/x/term"
 )
 
-// Wepo structure provide the client. Wepo holds thw config.
-type Wepo struct {
+// wepo structure provide the client. wepo holds the config.
+type wepo struct {
 	cfg *config.WepoConfig
 }
 
-// New returns a Wepo client. Requires '{cfgDirPath}/config.ini'.
-func New(cfgDirPath string) (*Wepo, error) {
+// New returns a wepo client. Requires '{cfgDirPath}/config.ini'.
+func New(cfgDirPath string) (*wepo, error) {
 	cfg, err := config.New(cfgDirPath)
 	if err != nil {
 		return nil, err
 	}
 
-	return &Wepo{
+	return &wepo{
 		cfg: cfg,
 	}, nil
 }
@@ -50,8 +50,8 @@ func Input(args []string, fd int) (string, error) {
 	return c, nil
 }
 
-// PostContents sends content to Wepo.WepoConfig.URL
-func (w Wepo) PostContents(contents []string) error {
+// PostContents sends content to wepo.WepoConfig.URL
+func (w wepo) PostContents(contents []string) error {
 	for _, c := range contents {
 		if err := w.post(c); err != nil {
 			return err
@@ -60,7 +60,7 @@ func (w Wepo) PostContents(contents []string) error {
 	return nil
 }
 
-func (w Wepo) post(content string) error {
+func (w wepo) post(content string) error {
 	body := strings.ReplaceAll(w.cfg.Payload, "{input}", content)
 	resp, err := http.Post(w.cfg.URL, "application/json", bytes.NewBuffer([]byte(body)))
 	if err != nil {
@@ -77,7 +77,7 @@ func (w Wepo) post(content string) error {
 var errNoNeedSplit = fmt.Errorf("no need to split")
 
 // NewContent is create post contents from string
-func (w Wepo) NewContents(input string) ([]string, error) {
+func (w wepo) NewContents(input string) ([]string, error) {
 	lines := strings.Split(input, "\n")
 	limit := w.cfg.CharLimit
 
