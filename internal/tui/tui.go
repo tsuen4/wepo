@@ -59,7 +59,9 @@ func Run(cfgDirPath string, args []string) error {
 
 	input, err := wepo.Input(args, int(os.Stdin.Fd()))
 	if err != nil {
-		return err
+		if err != wepo.ErrEmptyValue {
+			return err
+		}
 	}
 
 	inputField.SetText(input).
