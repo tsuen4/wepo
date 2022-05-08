@@ -28,6 +28,19 @@ var (
 	errorModal *tview.Modal
 )
 
+var inputLabel = "Enter a text: "
+
+func init() {
+	// initialize tview
+	app = tview.NewApplication()
+	inputField = tview.NewInputField().SetLabel(inputLabel).
+		SetFieldStyle(tcell.StyleDefault.Background(tview.Styles.PrimitiveBackgroundColor))
+	errorModal = tview.NewModal()
+	page = tview.NewPages().
+		AddPage(inputPage, inputField, true, true).
+		AddPage(errorPage, errorModal, true, false)
+}
+
 func handleError(err error, buttonIndex int, pageName string) {
 	errorModal.SetFocus(0).SetText(err.Error())
 	page.SwitchToPage(errorPage)
@@ -41,31 +54,24 @@ func Run(cfgDirPath string, args []string) error {
 		return err
 	}
 
-	// initialize tview
-	app = tview.NewApplication()
-	inputField = tview.NewInputField().SetLabel("Enter a text: ").SetText(strings.Join(args, " "))
-	errorModal = tview.NewModal()
-	page = tview.NewPages().
-		AddPage(inputPage, inputField, true, true).
-		AddPage(errorPage, errorModal, true, false)
+	inputField.SetText(strings.Join(args, " ")).
+		SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+			switch event.Key() {
+			case tcell.KeyEnter:
+				contents, err := client.NewContents(inputField.GetText())
+				if err != nil {
+					handleError(err, 0, errorPage)
+				}
 
-	inputField.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		switch event.Key() {
-		case tcell.KeyEnter:
-			contents, err := client.NewContents(inputField.GetText())
-			if err != nil {
-				handleError(err, 0, errorPage)
+				if err := client.PostContents(contents); err != nil {
+					handleError(err, 0, errorPage)
+				}
+
+				inputField.SetText("")
+				return nil
 			}
-
-			if err := client.PostContents(contents); err != nil {
-				handleError(err, 0, errorPage)
-			}
-
-			inputField.SetText("")
-			return nil
-		}
-		return event
-	})
+			return event
+		})
 
 	errorModal.AddButtons([]string{quitLabel, okLabel}).
 		SetFocus(0).
