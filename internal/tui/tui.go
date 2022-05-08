@@ -41,7 +41,7 @@ func init() {
 		AddPage(errorPage, errorModal, true, false)
 }
 
-func handleError(err error, buttonIndex int, pageName string) {
+func handleError(err error, pageName string) {
 	errorModal.SetFocus(0).SetText(err.Error())
 	page.SwitchToPage(errorPage)
 }
@@ -60,11 +60,11 @@ func Run(cfgDirPath string, args []string) error {
 			case tcell.KeyEnter:
 				contents, err := client.NewContents(inputField.GetText())
 				if err != nil {
-					handleError(err, 0, errorPage)
+					handleError(err, errorPage)
 				}
 
 				if err := client.PostContents(contents); err != nil {
-					handleError(err, 0, errorPage)
+					handleError(err, errorPage)
 				}
 
 				inputField.SetText("")
