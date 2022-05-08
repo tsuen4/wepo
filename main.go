@@ -36,7 +36,7 @@ func run(args []string) error {
 		return err
 	}
 
-	cfg, err := wepo.Config(filepath.Join(filepath.Dir(exe), wepo.CfgFileName))
+	client, err := wepo.New(filepath.Join(filepath.Dir(exe)))
 	if err != nil {
 		return err
 	}
@@ -45,13 +45,14 @@ func run(args []string) error {
 	if err != nil {
 		return err
 	}
-	contents, err := cfg.Contents(input)
+
+	contents, err := client.NewContents(input)
 	if err != nil {
 		return err
 	}
 
 	for _, c := range contents {
-		if err := cfg.PostDiscord(c); err != nil {
+		if err := client.PostDiscord(c); err != nil {
 			return err
 		}
 	}

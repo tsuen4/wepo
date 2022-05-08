@@ -1,8 +1,9 @@
-package wepo
+package config
 
 import (
 	"flag"
 	"fmt"
+	"path/filepath"
 	"strconv"
 
 	"gopkg.in/ini.v1"
@@ -31,7 +32,8 @@ func init() {
 	flag.StringVar(&section, "t", "", fmt.Sprintf(`Key with %s set in "%s"`, webhookURLKey, CfgFileName))
 }
 
-type wepoConfig struct {
+// WepoConfig structure holds the parameters from the ini files.
+type WepoConfig struct {
 	URL       string
 	CharLimit int
 	Payload   string
@@ -39,8 +41,9 @@ type wepoConfig struct {
 
 const notSetMsg = `"%s" is not set in "%s"`
 
-func Config(filePath string) (*wepoConfig, error) {
-	setting, err := ini.Load(filePath)
+// New returns a *WepoConfig. Requires '{cfgDirPath}/config.ini'.
+func New(cfgDirPath string) (*WepoConfig, error) {
+	setting, err := ini.Load(filepath.Join(cfgDirPath, CfgFileName))
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +53,7 @@ func Config(filePath string) (*wepoConfig, error) {
 		return nil, err
 	}
 
-	return &wepoConfig{
+	return &WepoConfig{
 		URL:       url,
 		CharLimit: charLimit(setting, section),
 		Payload:   payload(setting, section),
