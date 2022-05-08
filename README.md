@@ -13,13 +13,23 @@ POST to the webhook URL set in config.ini.
   - `char_limit`: Character limit to be sent(default: `1024`)
 - The arguments specified at run time or the values ​​of the standard input are sent.
 
-```shell
-# arg
+```sh
+# Use args
 ./wepo example
 
-# stdin
+# Use stdin
 cat example.txt | ./wepo
 
-# other destinations
-./wepo -d sec1 example
+# Use other destinations
+./wepo -s sec1 example
+```
+
+- Run in TUI mode
+
+```sh
+# Run in TUI mode
+./wepo -t
+
+# Run in TUI mode with other destinations
+./wepo -t -s sec1
 ```
