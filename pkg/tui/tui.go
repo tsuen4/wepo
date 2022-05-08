@@ -45,7 +45,7 @@ func Run(cfgDirPath string, args []string) error {
 	app = tview.NewApplication()
 	inputField = tview.NewInputField().SetLabel("Enter a text: ").SetText(strings.Join(args, " "))
 	errorModal = tview.NewModal()
-	page := tview.NewPages().
+	page = tview.NewPages().
 		AddPage(inputPage, inputField, true, true).
 		AddPage(errorPage, errorModal, true, false)
 
