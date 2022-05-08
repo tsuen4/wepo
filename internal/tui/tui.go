@@ -66,16 +66,23 @@ func Run(cfgDirPath string, args []string) error {
 		SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 			switch event.Key() {
 			case tcell.KeyEnter:
+				causedErr := false
 				contents, err := client.NewContents(inputField.GetText())
 				if err != nil {
+					causedErr = true
+					// FIXME: add page
 					handleError(err, errorPage)
 				}
 
 				if err := client.PostContents(contents); err != nil {
+					causedErr = true
+					// FIXME: add page
 					handleError(err, errorPage)
 				}
 
-				inputField.SetText("")
+				if !causedErr {
+					inputField.SetText("")
+				}
 				return nil
 			}
 			return event
