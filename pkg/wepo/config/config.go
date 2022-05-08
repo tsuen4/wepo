@@ -29,7 +29,7 @@ const (
 )
 
 func init() {
-	flag.StringVar(&section, "t", "", fmt.Sprintf(`Key with %s set in "%s"`, webhookURLKey, CfgFileName))
+	flag.StringVar(&section, "t", "", fmt.Sprintf(`Section name of "%s" where "%s" is set`, CfgFileName, webhookURLKey))
 }
 
 // WepoConfig structure holds the parameters from the ini files.
