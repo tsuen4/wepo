@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"log"
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -20,7 +20,8 @@ func main() {
 	flag.Parse()
 
 	if err := run(flag.Args()); err != nil {
-		log.Fatalf("error: %s\n", err)
+		fmt.Fprintf(os.Stderr, "error: %s\n", err)
+		os.Exit(1)
 	}
 }
 
