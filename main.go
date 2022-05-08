@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/tsuen4/wepo/pkg/tui"
+	"github.com/tsuen4/wepo/internal/tui"
 	"github.com/tsuen4/wepo/pkg/wepo"
 )
 
