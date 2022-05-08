@@ -10,10 +10,10 @@ import (
 	"github.com/tsuen4/wepo/pkg/wepo"
 )
 
-var TUIMode bool
+var isTUIMode bool
 
 func init() {
-	flag.BoolVar(&TUIMode, "t", false, "Enable tui mode")
+	flag.BoolVar(&isTUIMode, "t", false, "Enable tui mode")
 }
 
 func main() {
@@ -33,7 +33,7 @@ func run(args []string) error {
 	cfgDirPath := filepath.Join(filepath.Dir(exe))
 
 	var runWepo func(string, []string) error
-	if TUIMode {
+	if isTUIMode {
 		runWepo = tuiMode
 	} else {
 		runWepo = shellMode
