@@ -1,7 +1,7 @@
 package tui
 
 import (
-	"strings"
+	"os"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -33,9 +33,12 @@ var inputLabel = "Enter a text: "
 func init() {
 	// initialize tview
 	app = tview.NewApplication()
+
 	inputField = tview.NewInputField().SetLabel(inputLabel).
 		SetFieldStyle(tcell.StyleDefault.Background(tview.Styles.PrimitiveBackgroundColor))
+
 	errorModal = tview.NewModal()
+
 	page = tview.NewPages().
 		AddPage(inputPage, inputField, true, true).
 		AddPage(errorPage, errorModal, true, false)
@@ -54,7 +57,12 @@ func Run(cfgDirPath string, args []string) error {
 		return err
 	}
 
-	inputField.SetText(strings.Join(args, " ")).
+	input, err := wepo.Input(args, int(os.Stdin.Fd()))
+	if err != nil {
+		return err
+	}
+
+	inputField.SetText(input).
 		SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 			switch event.Key() {
 			case tcell.KeyEnter:
