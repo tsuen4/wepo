@@ -50,8 +50,17 @@ func Input(args []string, fd int) (string, error) {
 	return c, nil
 }
 
-// PostDiscord sends content to Wepoconfig.URL
-func (w Wepo) PostDiscord(content string) error {
+// PostContents sends content to Wepo.WepoConfig.URL
+func (w Wepo) PostContents(contents []string) error {
+	for _, c := range contents {
+		if err := w.post(c); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (w Wepo) post(content string) error {
 	body := strings.ReplaceAll(w.cfg.Payload, "{input}", content)
 	resp, err := http.Post(w.cfg.URL, "application/json", bytes.NewBuffer([]byte(body)))
 	if err != nil {

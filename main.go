@@ -51,10 +51,8 @@ func run(args []string) error {
 		return err
 	}
 
-	for _, c := range contents {
-		if err := client.PostDiscord(c); err != nil {
-			return err
-		}
+	if err := client.PostContents(contents); err != nil {
+		return err
 	}
 
 	return nil
