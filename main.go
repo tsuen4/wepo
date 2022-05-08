@@ -2,32 +2,26 @@ package main
 
 import (
 	"flag"
-	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 
+	"github.com/tsuen4/wepo/pkg/tui"
 	"github.com/tsuen4/wepo/pkg/wepo"
 )
 
-type exitCode int
+var TUIMode bool
 
-// error code
-const (
-	exitCodeOK exitCode = iota
-	exitCodeErr
-)
+func init() {
+	flag.BoolVar(&TUIMode, "t", false, "Enable tui mode")
+}
 
 func main() {
 	flag.Parse()
-	os.Exit(int(Main(flag.Args())))
-}
 
-func Main(args []string) exitCode {
-	if err := run(args); err != nil {
-		fmt.Fprintf(os.Stderr, "error: %s\n", err)
-		return exitCodeErr
+	if err := run(flag.Args()); err != nil {
+		log.Fatalf("error: %s\n", err)
 	}
-	return exitCodeOK
 }
 
 func run(args []string) error {
@@ -35,8 +29,24 @@ func run(args []string) error {
 	if err != nil {
 		return err
 	}
+	cfgDirPath := filepath.Join(filepath.Dir(exe))
 
-	client, err := wepo.New(filepath.Join(filepath.Dir(exe)))
+	var runWepo func(string, []string) error
+	if TUIMode {
+		runWepo = tuiMode
+	} else {
+		runWepo = shellMode
+	}
+
+	if err := runWepo(cfgDirPath, flag.Args()); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func shellMode(cfgDirPath string, args []string) error {
+	client, err := wepo.New(cfgDirPath)
 	if err != nil {
 		return err
 	}
@@ -52,6 +62,14 @@ func run(args []string) error {
 	}
 
 	if err := client.PostContents(contents); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func tuiMode(cfgDirPath string, args []string) error {
+	if err := tui.Run(cfgDirPath, args); err != nil {
 		return err
 	}
 
