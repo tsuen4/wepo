@@ -26,11 +26,11 @@ func main() {
 }
 
 func run(args []string) error {
-	exe, err := os.Executable()
+	home, err := os.UserHomeDir()
 	if err != nil {
 		return err
 	}
-	cfgDirPath := filepath.Join(filepath.Dir(exe))
+	cfgDirPath := filepath.Join(home, ".config", "wepo")
 
 	var runWepo func(string, []string) error
 	if isTUIMode {
