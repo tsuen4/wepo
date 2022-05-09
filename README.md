@@ -1,35 +1,68 @@
 # wepo
 
-POST to the webhook URL set in config.ini.
+POST contents to the webhook URL set in config.ini.
 
-## Usage
+## Installation
 
-- Generate `config.ini`
-  - `cp config.example.ini config.ini`
+```sh
+go install github.com/tsuen4/wepo@latest
+```
+
+## Settings
+
+- Create `config.ini` to `$HOME/.config/wepo` directory
+
+```ini
+; default destinations
+webhook_url=https://[webhook_url]
+
+; optional
+payload={"content": "{input}"}
+char_limit=1024
+
+; ------------------------
+; add other destinations
+[sec1]
+webhook_url=https://[sec1]/[webhook_url]
+; optional
+payload={"content": "prefix {input}"}
+
+; ------------------------
+; add other destinations
+[sec2]
+webhook_url=https://[sec2]/[webhook_url]
+; use default payload settings
+; payload=
+```
+
 - Set the URL of the Webhook in `webhook_url` in `config.ini`
   - Multiple destinations can be set by adding a section (e.g. `[sec1]`)
-- The following keys have a fixed priority and are loaded in the order of section, global, default
-  - `payload`: JSON format to be sent(default: `{"content": "{input}"}`)
-  - `char_limit`: Character limit to be sent(default: `1024`)
+- The following keys have a fixed priority and are loaded in the order of section, default, initial settings
+  - `payload`: JSON format to be sent(initial settings: `{"content": "{input}"}`)
+  - `char_limit`: Character limit to be sent(initial settings: `1024`)
 - The arguments specified at run time or the values ​​of the standard input are sent.
+
+## Usage: Shell mode
 
 ```sh
 # Use args
-./wepo example
+wepo example
 
 # Use stdin
-cat example.txt | ./wepo
+cat example.txt | wepo
 
 # Use other destinations
-./wepo -s sec1 example
+wepo -s sec1 example
 ```
 
-- Run in TUI mode
+## Usage: Run in TUI mode
 
 ```sh
 # Run in TUI mode
-./wepo -t
+wepo -t
 
 # Run in TUI mode with other destinations
-./wepo -t -s sec1
+wepo -t -s sec1
+
+# Press Ctrl + C to exit
 ```
