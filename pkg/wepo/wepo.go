@@ -29,6 +29,7 @@ func New(cfgDirPath string) (*wepo, error) {
 	}, nil
 }
 
+// ErrEmptyValue : error with when empty arguments
 var ErrEmptyValue = fmt.Errorf("empty value")
 
 // Input returns a string. The string is entered from an argument or pipeline.
