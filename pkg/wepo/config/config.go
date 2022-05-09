@@ -9,7 +9,7 @@ import (
 	"gopkg.in/ini.v1"
 )
 
-const CfgFileName = "config.ini"
+const cfgFileName = "config.ini"
 
 // ini key
 const (
@@ -29,7 +29,7 @@ const (
 )
 
 func init() {
-	flag.StringVar(&section, "s", "", fmt.Sprintf(`Section name of "%s" where "%s" is set`, CfgFileName, webhookURLKey))
+	flag.StringVar(&section, "s", "", fmt.Sprintf(`Section name of "%s" where "%s" is set`, cfgFileName, webhookURLKey))
 }
 
 // WepoConfig structure holds the parameters from the ini files.
@@ -43,7 +43,7 @@ const notSetMsg = `"%s" is not set in "%s"`
 
 // New returns a *WepoConfig. Requires '{cfgDirPath}/config.ini'.
 func New(cfgDirPath string) (*WepoConfig, error) {
-	setting, err := ini.Load(filepath.Join(cfgDirPath, CfgFileName))
+	setting, err := ini.Load(filepath.Join(cfgDirPath, cfgFileName))
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +78,7 @@ func charLimit(setting *ini.File, sect string) int {
 func url(setting *ini.File, sect string) (string, error) {
 	url := setting.Section(sect).Key(webhookURLKey).String()
 	if len(url) == 0 {
-		msg := fmt.Sprintf(notSetMsg, webhookURLKey, CfgFileName)
+		msg := fmt.Sprintf(notSetMsg, webhookURLKey, cfgFileName)
 		if len(section) != 0 {
 			msg = fmt.Sprintf("[%s] %s", section, msg)
 		}
