@@ -35,13 +35,16 @@ func init() {
 	app = tview.NewApplication()
 
 	inputField = tview.NewInputField().SetLabel(inputLabel).
-		SetFieldStyle(tcell.StyleDefault.Background(tview.Styles.PrimitiveBackgroundColor))
+		SetFieldStyle(tcell.StyleDefault.Background(tcell.ColorDefault))
+	inputField.SetBackgroundColor(tcell.ColorDefault)
 
 	errorModal = tview.NewModal()
+	errorModal.SetBackgroundColor(tcell.ColorDefault)
 
 	page = tview.NewPages().
 		AddPage(inputPage, inputField, true, true).
 		AddPage(errorPage, errorModal, true, false)
+	page.SetBackgroundColor(tcell.ColorDefault)
 }
 
 func handleError(err error, pageName string) {
