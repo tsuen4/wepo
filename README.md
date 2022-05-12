@@ -39,14 +39,15 @@ webhook_url=https://[sec2]/[webhook_url]
   - Multiple destinations can be set by adding a section (e.g. `[sec1]`)
 - The following keys have a fixed priority and are loaded in the order of section, default, initial settings
   - `payload`: JSON format to be sent(initial settings: `{"content": "{input}"}`)
+    - The `{input}` part will be replaced by the value passed.
   - `char_limit`: Character limit to be sent(initial settings: `1024`)
-- The arguments specified at run time or the values ​​of the standard input are sent.
+- The arguments specified at run time or the values of the standard input are sent.
 
 ## Usage: Shell mode
 
 ```sh
 # Use args
-wepo example
+wepo hello
 
 # Use stdin
 cat example.txt | wepo
