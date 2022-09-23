@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/gdamore/tcell/v2"
@@ -28,13 +29,13 @@ var (
 	errorModal *tview.Modal
 )
 
-var inputLabel = "Enter a text: "
+var inputLabel = "Enter a text%s: "
 
 func init() {
 	// initialize tview
 	app = tview.NewApplication()
 
-	inputField = tview.NewInputField().SetLabel(inputLabel).
+	inputField = tview.NewInputField().
 		SetFieldStyle(tcell.StyleDefault.Background(tcell.ColorDefault))
 	inputField.SetBackgroundColor(tcell.ColorDefault)
 
@@ -67,7 +68,11 @@ func Run(iniPath, section string, args []string) error {
 		}
 	}
 
-	inputField.SetText(input).
+	var sectionLabel string
+	if len(section) != 0 {
+		sectionLabel = " (" + section + ")"
+	}
+	inputField.SetLabel(fmt.Sprintf(inputLabel, sectionLabel)).SetText(input).
 		SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 			switch event.Key() {
 			case tcell.KeyEnter:
