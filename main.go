@@ -26,7 +26,14 @@ func init() {
 func main() {
 	flag.Parse()
 
-	if err := run(flag.Args()); err != nil {
+	args := flag.Args()
+	if len(args) == 0 {
+		fmt.Fprintf(os.Stderr, "error: empty value\n")
+		flag.Usage()
+		os.Exit(1)
+	}
+
+	if err := run(args); err != nil {
 		fmt.Fprintf(os.Stderr, "error: %s\n", err)
 		os.Exit(1)
 	}
