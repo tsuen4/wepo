@@ -8,12 +8,19 @@ import (
 
 	"github.com/tsuen4/wepo/internal/tui"
 	"github.com/tsuen4/wepo/pkg/wepo"
+	"github.com/tsuen4/wepo/pkg/wepo/config"
 )
 
-var isTUIMode bool
+const appName = "wepo"
+
+var (
+	isTUIMode bool
+	section   string
+)
 
 func init() {
 	flag.BoolVar(&isTUIMode, "t", false, "Enable tui mode")
+	flag.StringVar(&section, "s", "", fmt.Sprintf(`Section name of "%s" where "%s" is set`, cfgFilePath(), config.WebhookURLKey))
 }
 
 func main() {
@@ -26,28 +33,22 @@ func main() {
 }
 
 func run(args []string) error {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return err
-	}
-	cfgDirPath := filepath.Join(home, ".config", "wepo")
-
-	var runWepo func(string, []string) error
+	var runWepo func(string, string, []string) error
 	if isTUIMode {
 		runWepo = tuiMode
 	} else {
 		runWepo = shellMode
 	}
 
-	if err := runWepo(cfgDirPath, flag.Args()); err != nil {
+	if err := runWepo(cfgFilePath(), section, flag.Args()); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func shellMode(cfgDirPath string, args []string) error {
-	client, err := wepo.New(cfgDirPath)
+func shellMode(cfgDirPath, section string, args []string) error {
+	client, err := wepo.New(cfgDirPath, section)
 	if err != nil {
 		return err
 	}
@@ -69,10 +70,19 @@ func shellMode(cfgDirPath string, args []string) error {
 	return nil
 }
 
-func tuiMode(cfgDirPath string, args []string) error {
-	if err := tui.Run(cfgDirPath, args); err != nil {
+func tuiMode(cfgDirPath, section string, args []string) error {
+	if err := tui.Run(cfgDirPath, section, args); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+// cfgFilePath returns config file path
+func cfgFilePath() string {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		home = "$HOME"
+	}
+	return filepath.Join(home, ".config", appName, config.CfgFileName)
 }

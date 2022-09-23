@@ -53,9 +53,9 @@ func handleError(err error, pageName string) {
 }
 
 // Run starts tui view.
-func Run(cfgDirPath string, args []string) error {
+func Run(iniPath, section string, args []string) error {
 	// initialize
-	client, err := wepo.New(cfgDirPath)
+	client, err := wepo.New(iniPath, section)
 	if err != nil {
 		return err
 	}
