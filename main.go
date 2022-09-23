@@ -27,8 +27,8 @@ func main() {
 	flag.Parse()
 
 	args := flag.Args()
-	if len(args) == 0 {
-		fmt.Fprintf(os.Stderr, "error: empty value\n")
+	if !isTUIMode && len(args) == 0 {
+		fmt.Fprintf(os.Stderr, "error: %s\n", wepo.ErrEmptyValue)
 		flag.Usage()
 		os.Exit(1)
 	}
