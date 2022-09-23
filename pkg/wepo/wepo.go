@@ -17,9 +17,9 @@ type wepo struct {
 	cfg *config.WepoConfig
 }
 
-// New returns a wepo client. Requires '{cfgDirPath}/config.ini'.
-func New(cfgDirPath string) (*wepo, error) {
-	cfg, err := config.New(cfgDirPath)
+// New returns a wepo client. Requires 'config.ini'.
+func New(iniPath, section string) (*wepo, error) {
+	cfg, err := config.New(iniPath, section)
 	if err != nil {
 		return nil, err
 	}

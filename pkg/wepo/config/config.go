@@ -1,36 +1,27 @@
 package config
 
 import (
-	"flag"
 	"fmt"
-	"path/filepath"
 	"strconv"
 
 	"gopkg.in/ini.v1"
 )
 
-const cfgFileName = "config.ini"
+const CfgFileName = "config.ini"
+
+var cfgFilePath string
 
 // ini key
 const (
-	webhookURLKey = "webhook_url"
+	WebhookURLKey = "webhook_url"
 	payloadKey    = "payload"
 	charLimitKey  = "char_limit"
-)
-
-// ini section name
-var (
-	section = ""
 )
 
 const (
 	defaultCharLimit = 1024
 	defaultPayload   = `{"content": "{input}"}`
 )
-
-func init() {
-	flag.StringVar(&section, "s", "", fmt.Sprintf(`Section name of "%s" where "%s" is set`, cfgFileName, webhookURLKey))
-}
 
 // WepoConfig structure holds the parameters from the ini files.
 type WepoConfig struct {
@@ -41,9 +32,10 @@ type WepoConfig struct {
 
 const notSetMsg = `"%s" is not set in "%s"`
 
-// New returns a *WepoConfig. Requires '{cfgDirPath}/config.ini'.
-func New(cfgDirPath string) (*WepoConfig, error) {
-	setting, err := ini.Load(filepath.Join(cfgDirPath, cfgFileName))
+// New returns a *WepoConfig. Requires 'config.ini'.
+func New(iniPath, section string) (*WepoConfig, error) {
+	cfgFilePath = iniPath
+	setting, err := ini.Load(cfgFilePath)
 	if err != nil {
 		return nil, err
 	}
@@ -76,11 +68,11 @@ func charLimit(setting *ini.File, sect string) int {
 }
 
 func url(setting *ini.File, sect string) (string, error) {
-	url := setting.Section(sect).Key(webhookURLKey).String()
+	url := setting.Section(sect).Key(WebhookURLKey).String()
 	if len(url) == 0 {
-		msg := fmt.Sprintf(notSetMsg, webhookURLKey, cfgFileName)
-		if len(section) != 0 {
-			msg = fmt.Sprintf("[%s] %s", section, msg)
+		msg := fmt.Sprintf(notSetMsg, WebhookURLKey, cfgFilePath)
+		if len(sect) != 0 {
+			msg = fmt.Sprintf("[%s] %s", sect, msg)
 		}
 		return "", fmt.Errorf(msg)
 	}

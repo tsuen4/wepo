@@ -119,19 +119,19 @@ func TestURL(t *testing.T) {
 		isError bool
 	}{
 		{
-			desc:    fmt.Sprintf("test read '%s': global value", webhookURLKey),
+			desc:    fmt.Sprintf("test read '%s': global value", WebhookURLKey),
 			section: "",
 			want:    "https://example.com",
 			isError: false,
 		},
 		{
-			desc:    fmt.Sprintf("test read '%s': setting value", webhookURLKey),
+			desc:    fmt.Sprintf("test read '%s': setting value", WebhookURLKey),
 			section: "sec1",
 			want:    "https://example.com/sec1",
 			isError: false,
 		},
 		{
-			desc:    fmt.Sprintf("test read '%s': empty value", webhookURLKey),
+			desc:    fmt.Sprintf("test read '%s': empty value", WebhookURLKey),
 			section: "sec3",
 			want:    "",
 			isError: true,
@@ -146,7 +146,7 @@ func TestURL(t *testing.T) {
 				}
 			} else {
 				if got != tc.want {
-					t.Fatalf(UNEXPECTED_ERROR_MSG, webhookURLKey, got, tc.want)
+					t.Fatalf(UNEXPECTED_ERROR_MSG, WebhookURLKey, got, tc.want)
 				}
 			}
 		})
