@@ -7,7 +7,7 @@ import (
 	"github.com/tsuen4/wepo/pkg/wepo/config"
 )
 
-func TestSplitRow(t *testing.T) {
+func TestSplitLine(t *testing.T) {
 	type splitInput struct {
 		str   string
 		limit int
@@ -47,17 +47,14 @@ func TestSplitRow(t *testing.T) {
 				"123456",
 				6,
 			},
-			want: []string{},
+			want: []string{
+				"123456",
+			},
 		},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.desc, func(t *testing.T) {
-			lines, err := splitRow(tc.input.str, tc.input.limit)
-			if err != nil {
-				if err != errNoNeedSplit {
-					t.Fatalf("failed to %s: %s", tc.desc, err)
-				}
-			}
+			lines := splitLine(tc.input.str, tc.input.limit)
 			if len(lines) != len(tc.want) {
 				t.Fatalf("failed to %s: got: %v, want: %v", tc.desc, len(lines), len(tc.want))
 			}
@@ -126,16 +123,26 @@ func TestAppendLine(t *testing.T) {
 				"12",
 			},
 		},
+		{
+			desc: "test append line with equals the limit",
+			input: appendLineInput{
+				[]string{
+					"00",
+					"1234567890",
+				},
+				10,
+			},
+			want: []string{
+				"00",
+				"1234567890",
+			},
+		},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.desc, func(t *testing.T) {
 			lines := []string{}
 			for _, line := range tc.input.lines {
-				var err error
-				lines, err = appendLine(lines, line, tc.input.limit)
-				if err != nil {
-					t.Fatalf("failed to %s: %s", tc.desc, err)
-				}
+				lines = appendLine(lines, line, tc.input.limit)
 			}
 			if len(lines) != len(tc.want) {
 				fmt.Println("got:", lines)
@@ -213,10 +220,7 @@ func TestNewContents(t *testing.T) {
 				},
 			}
 
-			lines, err := client.NewContents(tc.in.input)
-			if err != nil {
-				t.Fatalf("failed to %s: %s", tc.desc, err)
-			}
+			lines := client.NewContents(tc.in.input)
 			if len(lines) != len(tc.want) {
 				t.Fatalf("failed to %s: got: %v, want: %v", tc.desc, len(lines), len(tc.want))
 			}

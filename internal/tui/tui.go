@@ -76,14 +76,10 @@ func Run(iniPath, section string, args []string) error {
 			switch event.Key() {
 			case tcell.KeyEnter:
 				causedErr := false
-				contents, err := client.NewContents(inputField.GetText())
-				if err != nil {
-					causedErr = true
-					// FIXME: add page
-					handleError(err, errorPage)
-				}
 
-				if err := client.PostContents(contents); err != nil {
+				if err := client.PostContents(
+					client.NewContents(inputField.GetText()),
+				); err != nil {
 					causedErr = true
 					// FIXME: add page
 					handleError(err, errorPage)
