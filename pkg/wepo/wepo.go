@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/tsuen4/wepo/pkg/wepo/config"
+	"golang.org/x/term"
 )
 
 // wepo structure provide the client. wepo holds the config.
@@ -32,12 +33,19 @@ func New(iniPath, section string) (*wepo, error) {
 var ErrEmptyValue = fmt.Errorf("empty value")
 
 // Input returns a string. The string is entered from an argument or pipeline.
-func Input(args []string) (string, error) {
-	bytes, err := io.ReadAll(os.Stdin)
-	if err != nil {
-		return "", err
+func Input(args []string, fd int) (string, error) {
+	var input string
+
+	// fd: 0 -> default
+	if term.IsTerminal(fd) {
+		input = strings.Join(args, " ")
+	} else {
+		bytes, err := io.ReadAll(os.Stdin)
+		if err != nil {
+			return "", err
+		}
+		input = string(bytes)
 	}
-	input := string(bytes)
 
 	if len(input) == 0 {
 		return "", ErrEmptyValue

@@ -53,7 +53,7 @@ func shellMode(cfgDirPath, section string, args []string) error {
 		return err
 	}
 
-	input, err := wepo.Input(args)
+	input, err := wepo.Input(args, int(os.Stdin.Fd()))
 	if err != nil {
 		return err
 	}

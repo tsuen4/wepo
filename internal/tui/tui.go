@@ -2,6 +2,7 @@ package tui
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -60,7 +61,7 @@ func Run(iniPath, section string, args []string) error {
 		return err
 	}
 
-	input, err := wepo.Input(args)
+	input, err := wepo.Input(args, int(os.Stdin.Fd()))
 	if err != nil {
 		if err != wepo.ErrEmptyValue {
 			return err
