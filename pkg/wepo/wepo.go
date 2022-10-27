@@ -77,10 +77,8 @@ func (w wepo) post(content string) error {
 	return nil
 }
 
-var errNoNeedSplit = fmt.Errorf("no need to split")
-
-// NewContent is create post contents from string
-func (w wepo) NewContents(input string) ([]string, error) {
+// NewContents is create post contents from string
+func (w wepo) NewContents(input string) []string {
 	lines := strings.Split(input, "\n")
 	limit := w.cfg.CharLimit
 
@@ -94,53 +92,45 @@ func (w wepo) NewContents(input string) ([]string, error) {
 		// escape double quotes
 		line = strings.ReplaceAll(line, "\"", `\"`)
 
-		var err error
-		contents, err = appendLine(contents, line, limit)
-		if err != nil {
-			return nil, err
-		}
+		contents = appendLine(contents, line, limit)
 	}
-	return contents, nil
+	return contents
 }
 
-func splitRow(str string, limit int) ([]string, error) {
+func splitLine(str string, limit int) []string {
 	runes := []rune(str)
 	lines := []string{}
 
-	if len(runes) > limit {
-		for i := 0; i < len(runes); i += limit {
-			nextSep := i + limit
-
-			isBackSlashEnd := false
-			if nextSep < len(runes) {
-				// Prevents trailing backslashes
-				if runes[nextSep-1] == '\\' {
-					isBackSlashEnd = true
-					nextSep--
-				}
-
-				lines = append(lines, string(runes[i:nextSep]))
-			} else {
-				lines = append(lines, string(runes[i:]))
-			}
-
-			if isBackSlashEnd {
-				i--
-			}
-		}
-		return lines, nil
-	} else {
-		return nil, errNoNeedSplit
+	if len(runes) <= limit {
+		return []string{str}
 	}
+
+	for i := 0; i < len(runes); i += limit {
+		nextSep := i + limit
+
+		isBackSlashEnd := false
+		if nextSep < len(runes) {
+			// Prevents trailing backslashes
+			if runes[nextSep-1] == '\\' {
+				isBackSlashEnd = true
+				nextSep--
+			}
+
+			lines = append(lines, string(runes[i:nextSep]))
+		} else {
+			lines = append(lines, string(runes[i:]))
+		}
+
+		if isBackSlashEnd {
+			i--
+		}
+	}
+	return lines
 }
 
-func appendLine(lines []string, str string, limit int) ([]string, error) {
+func appendLine(lines []string, str string, limit int) []string {
 	if len([]rune(str)) > limit {
-		splitted, err := splitRow(str, limit)
-		if err != nil {
-			return nil, err
-		}
-		return append(lines, splitted...), nil
+		return append(lines, splitLine(str, limit)...)
 	}
 
 	// initialize
@@ -162,5 +152,5 @@ func appendLine(lines []string, str string, limit int) ([]string, error) {
 	} else {
 		lines[idx] = body
 	}
-	return lines, nil
+	return lines
 }

@@ -58,12 +58,7 @@ func shellMode(cfgDirPath, section string, args []string) error {
 		return err
 	}
 
-	contents, err := client.NewContents(input)
-	if err != nil {
-		return err
-	}
-
-	if err := client.PostContents(contents); err != nil {
+	if err := client.PostContents(client.NewContents(input)); err != nil {
 		return err
 	}
 
