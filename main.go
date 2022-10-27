@@ -26,14 +26,7 @@ func init() {
 func main() {
 	flag.Parse()
 
-	args := flag.Args()
-	if !isTUIMode && len(args) == 0 {
-		fmt.Fprintf(os.Stderr, "error: %s\n", wepo.ErrEmptyValue)
-		flag.Usage()
-		os.Exit(1)
-	}
-
-	if err := run(args); err != nil {
+	if err := run(flag.Args()); err != nil {
 		fmt.Fprintf(os.Stderr, "error: %s\n", err)
 		os.Exit(1)
 	}
@@ -60,7 +53,7 @@ func shellMode(cfgDirPath, section string, args []string) error {
 		return err
 	}
 
-	input, err := wepo.Input(args, int(os.Stdin.Fd()))
+	input, err := wepo.Input(args)
 	if err != nil {
 		return err
 	}
